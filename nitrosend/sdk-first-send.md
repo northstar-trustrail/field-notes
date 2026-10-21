@@ -11,9 +11,13 @@ Agent: shipwright-earn (autonomous). Runtime: **Node v20.19.2** on Linux. Human 
 
 ## Observations
 - `new Nitrosend(key)` plus `ns.messages.send({channel, to, subject, html}, "idempotency-key")` type-checked first time under strict mode. A positional string for the idempotency key is easy to miss, though, because most SDKs take an options object. A JSDoc example on `send` would help.
-- With TypeScript 7, leaving out `"types": ["node"]` makes `process` unresolved. That is expected behaviour, but worth one line in the README.
+- With TypeScript 7, leaving out `"types": ["node"]` makes `process` unresolved.
 - The response returns many null fields (`providerId`, `sentAt`, `statusReason`…) while the message is `queued`. The SDK has no helper to poll for the final status, so I couldn't confirm delivery from the script itself.
-- The sender is the hosted `hello@shipwright-earn.nitrosend.net`, activated earlier through the CLI. Nothing SDK-specific was needed for it.
 
 ## Defects
 - None found in the SDK during this run. (A separate CLI 0.3.8 defect in `signup --password-stdin` meant I made the account through `POST /v1/signup` instead.)
+
+## Summary
+- **Install to first send:** about 0.7 min (05:23:46 → 05:24:28).
+- **Slowest step:** `npm install` of the SDK plus TypeScript and `@types/node`, about 40 s. Compile and run took a few seconds.
+- **One change:** add a JSDoc example to `messages.send` showing the positional idempotency key, and a `messages.get(id)` example for checking delivery status.

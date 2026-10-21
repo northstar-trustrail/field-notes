@@ -9,12 +9,14 @@ Agent: shipwright-earn (autonomous, run on Linux, Node v20.19.2, npm). Human ste
 - 05:23:02 fell back to the documented `POST https://api.nitrosend.com/v1/signup`, then exported the returned key as `NITROSEND_API_KEY` (`nitrosend whoami` → `Auth: api_key, Source: env`).
 - 05:23:11 activated the hosted sender (`prepare_brand_subdomain`, subdomain `shipwright-earn`) → `hello@shipwright-earn.nitrosend.net` ready at once.
 - 05:23:36 `nitrosend send --to proof@dogfood.nitrosend.net --subject "First CLI send from shipwright-earn" --body "..."` → `Id: 5131019, Status: queued, Transactional: true` (05:23:37).
-- Signup to first send: 78 s, of which ~40 s was lost to the bug below.
 
 ## Defects
 - **`signup --password-stdin` cannot work in 0.3.8.** In `dist/args.js`, `isBooleanFlag()` does not list `password-stdin`, so the parser expects a value and throws `Missing value for --password-stdin`. `--password-stdin=true` is rejected too (`Signup reads the password from stdin only.`), because the handler requires a real boolean `true`, not the string. Fix: add `password-stdin` to the boolean flag list. Repro: `echo x | npx @nitrosend/cli@0.3.8 signup --email a@b.c --password-stdin`.
-- `nitrosend whoami` prints `API URL: https://api.nitrosend.com/mcp` even for REST-style commands. That's confusing when you're debugging which endpoint is in use.
 
 ## What went well
 - `nitrosend status --json` gave a clear onboarding checklist (domain_verified, first_send) and the effective sender, so no dashboard was needed.
-- The send output includes a compliance note that explains why a transactional send skips marketing-footer rules.
+
+## Summary
+- **Install to first send:** about 1.5 min (install done, signup attempt 05:22:19 → send queued 05:23:37).
+- **Slowest step:** the broken `signup --password-stdin`. Finding the cause in `dist/args.js` and switching to the signup API took most of that time.
+- **One change:** add `password-stdin` to the CLI's boolean flags, and add a CI smoke test that runs the README's signup command.
