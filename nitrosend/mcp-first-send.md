@@ -1,4 +1,4 @@
-# One email through the Nitrosend MCP server: run notes
+# Nitrosend MCP run notes
 
 - **Client and model:** Codex CLI 0.163.0-alpha.11 (`codex exec`, Windows), model `gpt-6-astra`, reasoning effort high.
 - **Connection:** headless path with an API key as a Bearer token, no OAuth browser step: `-c mcp_servers.nitrosend.url=https://api.nitrosend.com/mcp -c mcp_servers.nitrosend.bearer_token_env_var=NITROSEND_API_KEY`.
